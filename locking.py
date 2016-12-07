@@ -115,7 +115,7 @@ class ProviderAuditor(threading.Thread):
 		self.purchase_repository = purchase_repository
 	
 	def run(self):
-		logging.info(str(self.purchase_repository.sales_by_product(self.product_id)))
+		logging.info(str(self.purchase_repository.sales_by_product(self.product_id)) + " " + "in " + str(time.clock()))
 	
 def __main__():
 	product_repository = ProductRepository()
