@@ -9,6 +9,8 @@
 import random
 import threading
 import logging
+import time
+from time import clock
 
 logging.basicConfig(level=logging.INFO,
 				format="[%(levelname)s] (%(threadName)-s) (%(module)-s) (%(funcName)-s) %(message)s", filename="/tmp/locking-py.log")
@@ -17,39 +19,53 @@ class Repository:
 	def __init__(self):
 		self.repo = {}
 		self.lock = threading.Lock()
+		self.process = clock
 	
 	def create(self, entry):
 		logging.info("waiting for lock")
-		self.lock.acquire()
-		try:
-			logging.info("acquired lock")
+		with self.lock:
+			logging.info("acquired lock within %f seconds"%(self.process()))
 			new_id = len(self.repo.keys())
 			entry["id"] = new_id
 			self.repo[new_id] = entry
-		finally:
-			logging.info("releasing lock")
-			self.lock.release()
+	
+		################ No longer required to acquire the lock creation with
+		################ the `with` command
+		################ under new threading module
+	
+		#self.lock.acquire()
+		#try:
+			#logging.info("acquired lock")
+			#new_id = len(self.repo.keys())
+			#entry["id"] = new_id
+			#self.repo[new_id] = entry
+		#finally:
+			#logging.info("releasing lock")
+			#self.lock.release()
 	
 	def find(self, entry_id):
 		logging.info("waiting for lock")
-		self.lock.acquire()
-		try:
-			logging.info("acquired lock")
-			return self.repo[entry_id]
-		except KeyError:
-			return None
-		finally:
-			logging.info("releasing lock")
-			self.lock.release()
+		with self.lock:
+			try:
+				logging.info("acquired lock in %f seconds"%(self.process()))
+				return self.repo[entry_id]
+			except KeyError:
+				return None
+		######### Read notes above ################
+			#finally:
+			#logging.info("releasing lock")
+			#self.lock.release()
 	def all(self):
 		logging.info("waiting for lock")
-		self.lock.acquire()
-		try:
-			logging.info("acquired lock")
+		with self.lock:
+			#try:
+			logging.info("acquired lock in %f seconds"%(self.process()))	
 			return self.repo
-		finally:
-			logging.info("releasing lock")
-			self.lock.release()
+		##### Once Again The Lock Is Self-Explanatory #####
+		##### With The `with` command #####
+		#finally:
+			#logging.info("releasing lock")
+			#self.lock.release()
 	
 class ProductRepository(Repository):
 	def __init__(self):
