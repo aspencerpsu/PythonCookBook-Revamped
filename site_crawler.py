@@ -1,6 +1,7 @@
 from httplib import HTTPConnection
 import threading
 import logging
+import semaphore
 
 logging.basicConfig(level=logging.INFO, format="(%(threadName)-10s) %(message)s", )
 def save(html, file_absolute_path):
