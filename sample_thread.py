@@ -14,11 +14,12 @@ class MyThread(threading.Thread):
 		threading.Thread.__init__(self)
 		threading.Thread.__init__(self)
 		self.sleep_time = sleep_time
+
 	def run(self):
 		my_logic(self.sleep_time)
 
 threads = [MyThread(i) for i in range(1, 4)]
-threads[2].setDaemon(True)
+#threads[2].setDaemon(True)
 
 for t in threads:
 	t.start()
