@@ -1,7 +1,7 @@
 from httplib import HTTPConnection
 import threading
 import logging
-import semaphore
+#import semaphore
 
 logging.basicConfig(level=logging.INFO, format="(%(threadName)-10s) %(message)s", )
 def save(html, file_absolute_path):
@@ -23,7 +23,7 @@ def crawl(req):
 
 class MyCrawler(threading.Thread):
 	def __init__(self, req, file_path):
-		threading.Thread.__init__(self, name="Crawler-{}".format(req["host"]))
+		threading.Thread.__init__(self, name="Crawler-{}".format(req["host"]),) 
 		self.req = req
 		self.file_path = file_path
 
@@ -42,8 +42,14 @@ def __main__():
 		req = {"host": host, "port": port, "path": path}
 		threads.append(MyCrawler(req, file_path))
 		continue_input = input("add another? (y/N) ") == "y"
+
 	for t in threads:
 		t.start()
-		# t.join()
+	
+	current_thread = threading.currentThread()
+	for thread in threading.enumerate():
+		if thread is not current_thread:
+			thread.join()
+
 __main__()
 
